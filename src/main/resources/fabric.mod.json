@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "makelag",
+  "version": "${version}",
+  "name": "MakeLag",
+  "description": "${mod_description}",
+  "authors": ["nieboczek"],
+  "license": "GPL-3.0",
+  "accessWidener": "makelag.accesswidener",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "nieboczek.makelag.MakeLag"
+    ],
+    "client": [
+      "nieboczek.makelag.MakeLagClient"
+    ]
+  },
+  "mixins": [
+    "makelag.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}

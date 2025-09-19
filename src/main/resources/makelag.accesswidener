@@ -1,0 +1,4 @@
+accessWidener v2 named
+accessible field net/minecraft/server/network/ServerCommonNetworkHandler connection Lnet/minecraft/network/ClientConnection;
+accessible field net/minecraft/network/ClientConnection channel Lio/netty/channel/Channel;
+accessible field net/minecraft/entity/damage/DamageTracker entity Lnet/minecraft/entity/LivingEntity;

@@ -1,0 +1,17 @@
+package nieboczek.makelag.module;
+
+import net.minecraft.server.network.ServerPlayerEntity;
+import nieboczek.makelag.module.backend.Module;
+import nieboczek.makelag.module.backend.ModuleState;
+
+public class DeathModule extends Module {
+    @Override
+    public void run(ServerPlayerEntity player, ModuleState state) {
+        player.kill(player.getWorld());
+    }
+
+    @Override
+    public String getName() {
+        return "death";
+    }
+}
