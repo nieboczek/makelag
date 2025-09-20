@@ -4,8 +4,15 @@
   "version": "${version}",
   "name": "MakeLag",
   "description": "${mod_description}",
-  "authors": ["nieboczek"],
+  "contact": {
+    "issues": "https://github.com/nieboczek/makelag/issues",
+    "sources": "https://github.com/nieboczek/makelag"
+  },
+  "authors": [
+    "nieboczek"
+  ],
   "license": "GPL-3.0",
+  "icon": "icon.png",
   "accessWidener": "makelag.accesswidener",
   "environment": "*",
   "entrypoints": {
