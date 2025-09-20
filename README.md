@@ -22,8 +22,8 @@ By default, the client-side ping display is disabled. Toggle it whenever you wan
 * `/makelag progression load <id>` - Loads the progression with the passed in id.
 * `/makelag progression start` - Starts the currently loaded progression.
 * `/makelag progression tick <tick>` - Sets the tick of the progression to the passed in tick.
-* `/makelag state <player> <module> <key> <value>` - Sets <key> of <module> to <value> for the specified player.
-* `/makelag config <key> <value>` - Sets <key> to <value> for all players.
+* `/makelag state <player> <module> <key> <value>` - Sets the passed in key of the specified module to the passed in value for the specified player.
+* `/makelag config <key> <value>` - Sets the specified key to the passed in value for all players.
 
 ## Modules
 A module affects gameplay in some way, which is described by the module id.
