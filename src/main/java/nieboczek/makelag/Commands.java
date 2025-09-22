@@ -74,6 +74,11 @@ public class Commands {
         //  /makelag pause
         command.then(literal("pause")
                 .executes(context -> {
+                    if (MakeLag.ticks == -1) {
+                        sendFeedback(context, "Can't pause, making lag is already paused");
+                        return 1;
+                    }
+
                     MakeLag.pausedTicks = MakeLag.ticks;
                     MakeLag.ticks = -1;
                     MakeLag.progression.resetToDefaults();
@@ -87,7 +92,7 @@ public class Commands {
         command.then(literal("resume")
                 .executes(context -> {
                     if (MakeLag.ticks > 0) {
-                        sendFeedback(context, "Can't resume, because you've already resumed making lag");
+                        sendFeedback(context, "Can't resume, making lag is already resumed");
                         return 1;
                     }
 
@@ -177,17 +182,27 @@ public class Commands {
                                 })
                         )
                 )
-        );
+                .then(literal("skip")
+                        .then(argument("ticks", IntegerArgumentType.integer(0))
+                                .executes(context -> {
+                                    int skippedTicks = context.getArgument("ticks", Integer.class);
+                                    MakeLag.ticks += skippedTicks;
 
-        //  /makelag test
-        command.then(literal("test")
-                .executes(context -> {
-                    loadDefaultProgression();
-                    MakeLag.progression.setTick(136000);
+                                    sendFeedback(context, "Skipped " + skippedTicks + "ticks of progression " + MakeLag.progression.getId() + ". Progression tick is now " + MakeLag.ticks);
+                                    return 0;
+                                })
+                        )
+                )
+                .then(literal("tickRate")
+                        .then(argument("rate", IntegerArgumentType.integer(1, 100))
+                                .executes(context -> {
+                                    MakeLag.tickRate = context.getArgument("rate", Integer.class);
 
-                    sendFeedback(context, "Started at tick 136000 with progression default");
-                    return 0;
-                })
+                                    sendFeedback(context, "Set progression tick rate of " + MakeLag.progression.getId() + " to " + MakeLag.tickRate);
+                                    return 0;
+                                })
+                        )
+                )
         );
     }
 }

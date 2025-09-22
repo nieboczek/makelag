@@ -4,7 +4,7 @@ With MakeLag you can artificially create lag!
 
 Simply just run this one command on a hosted server, an [Essential Mod](https://modrinth.com/mod/essential) world, or an [e4mc](https://modrinth.com/mod/e4mc) world and enjoy yourself some lag: `/makelag start`.
 
-The lag will increase gradually, if you ever feel like the need to speed it up a little, use the `/makelag progression tick <tick>` command and set the tick to something like `72000` for one hour of gameplay passed, `144000` for two hours passed, etc.
+The lag will increase gradually, if you ever feel like the need to speed it up a little, use the `/makelag progression skip <ticks>` command and set the ticks value to something like `12000` for 10 minutes of gameplay passed, `24000` for 20 minutes passed, etc.
 
 By default, the client-side ping display is disabled. Toggle it whenever you want using `/makelag togglePingDisplay`.
 
@@ -22,6 +22,8 @@ By default, the client-side ping display is disabled. Toggle it whenever you wan
 * `/makelag progression load <id>` - Loads the progression with the passed in id.
 * `/makelag progression start` - Starts the currently loaded progression.
 * `/makelag progression tick <tick>` - Sets the tick of the progression to the passed in tick.
+* `/makelag progression skip <ticks>` - Increments the progression tick count by the specified ticks value.
+* `/makelag progression tickRate <rate>` - Sets the tick rate, this means that every normal tick, the progression tick will be incremented by the tick rate.
 * `/makelag state <player> <module> <key> <value>` - Sets the passed in key of the specified module to the passed in value for the specified player.
 * `/makelag config <key> <value>` - Sets the specified key to the passed in value for all players.
 

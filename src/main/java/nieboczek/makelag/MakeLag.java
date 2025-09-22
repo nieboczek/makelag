@@ -57,6 +57,7 @@ public class MakeLag implements ModInitializer {
     public static boolean pingDisplayed = false;
     public static int pausedTicks = -1;
     public static int ticks = -1;
+    public static int tickRate = 1;
 
     public int ticksUntilNewPosition = MIN_TICKS_UNTIL_NEW_POSITION;
     public int ticksUntilPingSend = TICKS_UNTIL_PING_SEND;
@@ -93,7 +94,7 @@ public class MakeLag implements ModInitializer {
 
             progression.tick(ticks);
             ticksUntilSendStats--;
-            ticks++;
+            ticks += tickRate;
 
             addNewPosition();
             executeFakeLagSpike();
