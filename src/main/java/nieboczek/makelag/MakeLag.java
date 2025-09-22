@@ -55,9 +55,8 @@ public class MakeLag implements ModInitializer {
     public static Progression progression = new Progression();
     public static ArrayList<Vec3d> positions = new ArrayList<>();
     public static boolean pingDisplayed = false;
-    public static int pausedTicks = -1;
+    public static int tickRate = 0;
     public static int ticks = -1;
-    public static int tickRate = 1;
 
     public int ticksUntilNewPosition = MIN_TICKS_UNTIL_NEW_POSITION;
     public int ticksUntilPingSend = TICKS_UNTIL_PING_SEND;
@@ -103,6 +102,8 @@ public class MakeLag implements ModInitializer {
 
         ServerLifecycleEvents.SERVER_STOPPED.register($ -> Config.save());
         Config.load();
+
+        progression.load(Progression.PROVIDERS[1]);
     }
 
     private void sendPings() {

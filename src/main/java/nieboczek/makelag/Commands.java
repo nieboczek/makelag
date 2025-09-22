@@ -50,55 +50,14 @@ public class Commands {
         return 0;
     }
 
-    private static void loadDefaultProgression() {
-        for (Progression.Provider provider : Progression.PROVIDERS) {
-            if (provider.getId().equals("default")) {
-                MakeLag.progression.load(provider);
-                break;
-            }
-        }
-    }
-
     static {
         //  /makelag start
         command.then(literal("start")
                 .executes(context -> {
-                    loadDefaultProgression();
+                    MakeLag.tickRate = 1;
                     MakeLag.ticks = 0;
 
-                    sendFeedback(context, "Started making lag with the default progression");
-                    return 0;
-                })
-        );
-
-        //  /makelag pause
-        command.then(literal("pause")
-                .executes(context -> {
-                    if (MakeLag.ticks == -1) {
-                        sendFeedback(context, "Can't pause, making lag is already paused");
-                        return 1;
-                    }
-
-                    MakeLag.pausedTicks = MakeLag.ticks;
-                    MakeLag.ticks = -1;
-                    MakeLag.progression.resetToDefaults();
-
-                    sendFeedback(context, "Paused making lag at tick " + MakeLag.pausedTicks);
-                    return 0;
-                })
-        );
-
-        //  /makelag resume
-        command.then(literal("resume")
-                .executes(context -> {
-                    if (MakeLag.ticks > 0) {
-                        sendFeedback(context, "Can't resume, making lag is already resumed");
-                        return 1;
-                    }
-
-                    MakeLag.ticks = MakeLag.pausedTicks;
-                    MakeLag.progression.setTick(MakeLag.ticks);
-                    sendFeedback(context, "Resumed making lag at tick " + MakeLag.ticks);
+                    sendFeedback(context, "Started making lag with progression " + MakeLag.progression.getId());
                     return 0;
                 })
         );
@@ -162,20 +121,42 @@ public class Commands {
         }
 
         command.then(literal("progression")
-                .then(loadCmd)
-                .then(literal("start")
+                .then(literal("pause")
                         .executes(context -> {
-                            MakeLag.ticks = 0;
+                            if (MakeLag.tickRate == 0) {
+                                sendFeedback(context, "Can't pause, making lag is already paused");
+                                return 1;
+                            }
 
-                            sendFeedback(context, "Started progression " + MakeLag.progression.getId());
+                            MakeLag.tickRate = 0;
+                            MakeLag.progression.resetToDefaults();
+
+                            sendFeedback(context, "Paused making lag at tick " + MakeLag.ticks);
                             return 0;
                         })
                 )
+                .then(literal("resume")
+                        .executes(context -> {
+                            if (MakeLag.tickRate > 0) {
+                                sendFeedback(context, "Can't resume, making lag is already resumed");
+                                return 1;
+                            }
+
+                            MakeLag.tickRate = 1;
+                            MakeLag.progression.setTick(MakeLag.ticks);
+
+                            sendFeedback(context, "Resumed making lag at tick " + MakeLag.ticks);
+                            return 0;
+                        })
+                )
+                .then(loadCmd)
                 .then(literal("tick")
                         .then(argument("tick", IntegerArgumentType.integer(-1))
                                 .executes(context -> {
                                     MakeLag.ticks = context.getArgument("tick", Integer.class);
-                                    MakeLag.progression.setTick(MakeLag.ticks);
+                                    if (MakeLag.tickRate > 0) {
+                                        MakeLag.progression.setTick(MakeLag.ticks);
+                                    }
 
                                     sendFeedback(context, "Set progression tick of " + MakeLag.progression.getId() + " to " + MakeLag.ticks);
                                     return 0;
@@ -188,13 +169,13 @@ public class Commands {
                                     int skippedTicks = context.getArgument("ticks", Integer.class);
                                     MakeLag.ticks += skippedTicks;
 
-                                    sendFeedback(context, "Skipped " + skippedTicks + "ticks of progression " + MakeLag.progression.getId() + ". Progression tick is now " + MakeLag.ticks);
+                                    sendFeedback(context, "Skipped " + skippedTicks + " ticks of progression " + MakeLag.progression.getId() + ", progression tick is now " + MakeLag.ticks);
                                     return 0;
                                 })
                         )
                 )
                 .then(literal("tickRate")
-                        .then(argument("rate", IntegerArgumentType.integer(1, 100))
+                        .then(argument("rate", IntegerArgumentType.integer(0))
                                 .executes(context -> {
                                     MakeLag.tickRate = context.getArgument("rate", Integer.class);
 

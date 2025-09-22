@@ -15,15 +15,14 @@ By default, the client-side ping display is disabled. Toggle it whenever you wan
 * Lightweight and server-only - only needed on the server, optional client install adds ping display only.
 
 ## Commands
-* `/makelag start` - Loads the default progression and starts making lag.
-* `/makelag pause` - Pauses the currently loaded progression, removes the lag until resumed.
-* `/makelag resume` - Resumes the currently loaded progression.
+* `/makelag start` - Starts making lag using the currently loaded progression.
 * `/makelag togglePingDisplay` - Toggle the above nameplate ping display for all clients with this mod.
+* `/makelag progression pause` - Pauses the currently loaded progression, removes the lag until resumed.
+* `/makelag progression resume` - Resumes the currently loaded progression.
 * `/makelag progression load <id>` - Loads the progression with the passed in id.
-* `/makelag progression start` - Starts the currently loaded progression.
 * `/makelag progression tick <tick>` - Sets the tick of the progression to the passed in tick.
-* `/makelag progression skip <ticks>` - Increments the progression tick count by the specified ticks value.
-* `/makelag progression tickRate <rate>` - Sets the tick rate, this means that every normal tick, the progression tick will be incremented by the tick rate.
+* `/makelag progression skip <ticks>` - Skips the progression tick by the specified ticks amount.
+* `/makelag progression tickRate <rate>` - Sets the tick rate, tick rate means that every normal tick, the progression tick will be incremented by the tick rate.
 * `/makelag state <player> <module> <key> <value>` - Sets the passed in key of the specified module to the passed in value for the specified player.
 * `/makelag config <key> <value>` - Sets the specified key to the passed in value for all players.
 
