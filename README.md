@@ -6,7 +6,7 @@ Simply just run this one command on a hosted server, an [Essential Mod](https://
 
 The lag will increase gradually, if you ever feel like the need to speed it up a little, use the `/makelag progression skip <ticks>` command and set the ticks value to something like `12000` for 10 minutes of gameplay passed, `24000` for 20 minutes passed, etc.
 
-By default, the client-side ping display is disabled. Toggle it whenever you want using `/makelag togglePingDisplay`.
+By default, the client-side ping display is disabled. Toggle it whenever you want using `/makelag togglePingDisplay`. This will toggle it for all players.
 
 ## Features
 * Client-side ping display - displays ping above player's display name.
