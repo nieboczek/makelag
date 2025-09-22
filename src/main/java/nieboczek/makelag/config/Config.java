@@ -4,14 +4,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 import nieboczek.makelag.MakeLag;
+import org.apache.commons.io.FileUtils;
 
 import java.io.*;
+import java.net.URL;
 
 public class Config {
-    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private static final String DEATH_MESSAGES_FILE = "death_messages.json";
-    private static final String PROGRESSIONS_DIR = "progressions";
-
+    public static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     public static String[] deathMessages = {
             "{} died from lack of internet",
             "{} should buy better internet",
@@ -46,50 +45,53 @@ public class Config {
             "{} should buy an ethernet cable",
             "{} died from their ISP"
     };
+    public static final String[] BUILT_IN_PROGRESSIONS = {
+            "default", "null"
+    };
 
-    public static void load() {
-        try {
-            loadInternal();
-            MakeLag.log.info("[cfg] loaded successfully");
-        } catch (IOException e) {
-            MakeLag.log.error("[cfg] error while loading: ", e);
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public static void setup() {
+        File cfgDir = getCfgDir();
+        File deathMessagesFile = new File(cfgDir, "death_messages.json");
+        File progressionsDir = new File(cfgDir, "progressions");
+        cfgDir.mkdir();
+        progressionsDir.mkdir();
+
+        if (!deathMessagesFile.exists()) {
+            URL input = MakeLag.class.getResource("/assets/death_messages.json");
+            try {
+                FileUtils.copyURLToFile(input, deathMessagesFile);
+            } catch (IOException e) {
+                MakeLag.log.error("[cfg] couldn't copy death_messages.json to config/makelag/death_messages.json");
+            }
+        }
+
+        for (String builtInProgression : BUILT_IN_PROGRESSIONS) {
+            File file = new File(progressionsDir, builtInProgression + ".json");
+            if (!file.exists()) {
+                URL input = MakeLag.class.getResource("/assets/progressions/" + builtInProgression + ".json");
+                try {
+                    FileUtils.copyURLToFile(input, file);
+                } catch (IOException e) {
+                    MakeLag.log.error("[cfg] couldn't copy {}.json to config/makelag/progressions/{}.json", builtInProgression, builtInProgression);
+                }
+            }
         }
     }
 
-    public static void save() {
+    public static void reload() {
         try {
-            saveInternal();
-            MakeLag.log.info("[cfg] saved successfully");
+            File cfgDir = getCfgDir();
+            File deathMessagesFile = new File(cfgDir, "death_messages.json");
+
+            loadDeathMessages(deathMessagesFile);
+            MakeLag.log.info("[cfg] reloaded successfully");
         } catch (IOException e) {
-            MakeLag.log.error("[cfg] error while saving: ", e);
+            MakeLag.log.error("[cfg] error while reloading: ", e);
         }
     }
 
-    private static void loadInternal() throws IOException {
-        File cfgDir = getCfgDir();
-        File deathMessagesFile = new File(cfgDir, DEATH_MESSAGES_FILE);
-        File progressionsDir = new File(cfgDir, PROGRESSIONS_DIR);
-
-        checkState(cfgDir, progressionsDir);
-
-        readDeathMessages(deathMessagesFile);
-
-        // TODO: further logic to load progressions
-    }
-
-    private static void saveInternal() throws IOException {
-        File cfgDir = getCfgDir();
-        File deathMessagesFile = new File(cfgDir, DEATH_MESSAGES_FILE);
-        File progressionsDir = new File(cfgDir, PROGRESSIONS_DIR);
-
-        checkState(cfgDir, progressionsDir);
-
-        saveDeathMessages(deathMessagesFile);
-
-        // TODO: further logic to save progressions
-    }
-
-    private static void readDeathMessages(File file) throws IOException {
+    private static void loadDeathMessages(File file) throws IOException {
         try (FileReader reader = new FileReader(file)) {
             deathMessages = gson.fromJson(reader, String[].class);
         } catch (FileNotFoundException e) {
@@ -107,18 +109,11 @@ public class Config {
         }
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    private static void checkState(File cfgDir, File progressionsDir) {
-        cfgDir.mkdir();
-
-        if (!progressionsDir.exists()) {
-            if (!progressionsDir.mkdir()) {
-                MakeLag.log.error("[cfg] couldn't create progressions directory");
-            }
-        }
+    public static File getCfgDir() {
+        return FabricLoader.getInstance().getConfigDir().resolve("makelag").toFile();
     }
 
-    private static File getCfgDir() {
-        return FabricLoader.getInstance().getConfigDir().resolve("makelag").toFile();
+    public static File getProgressionsDir() {
+        return new File(getCfgDir(), "progressions");
     }
 }

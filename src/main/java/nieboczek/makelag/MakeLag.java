@@ -3,7 +3,6 @@ package nieboczek.makelag;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -30,7 +29,7 @@ import nieboczek.makelag.module.backend.ModuleState;
 import nieboczek.makelag.network.DelayedChannelHandler;
 import nieboczek.makelag.network.PingDisplayS2CPacket;
 import nieboczek.makelag.network.PingS2CPacket;
-import nieboczek.makelag.progression.Progression;
+import nieboczek.makelag.progression.ProgressionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +51,6 @@ public class MakeLag implements ModInitializer {
     public static MinecraftServer server;
 
     public static ModuleState configState = new ModuleState(Modules.CONFIG);
-    public static Progression progression = new Progression();
     public static ArrayList<Vec3d> positions = new ArrayList<>();
     public static boolean pingDisplayed = false;
     public static int tickRate = 0;
@@ -91,7 +89,7 @@ public class MakeLag implements ModInitializer {
                 return;
             }
 
-            progression.tick(ticks);
+            ProgressionManager.tick(ticks);
             ticksUntilSendStats--;
             ticks += tickRate;
 
@@ -100,10 +98,16 @@ public class MakeLag implements ModInitializer {
             runModules();
         });
 
-        ServerLifecycleEvents.SERVER_STOPPED.register($ -> Config.save());
-        Config.load();
+        Config.setup();
+        Config.reload();
 
-        progression.load(Progression.PROVIDERS[1]);
+        List<String> messages = ProgressionManager.load("default");
+        if (messages.size() > 1) {
+            log.error("error while loading progression default:");
+            for (String message : messages) {
+                log.error(message);
+            }
+        }
     }
 
     private void sendPings() {
