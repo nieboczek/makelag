@@ -11,7 +11,7 @@ By default, the client-side ping display is disabled. Toggle it whenever you wan
 ## Features
 * Client-side ping display - displays ping above player's display name.
 * Server-side artificial lag - delay, random teleports, dropped packets and surprises without needing client mods.
-* Progression system - create "lag over time" effects instead of settings values manually ~~(TODO) with the ability to load progressions from JSON files~~.
+* Progression system - create "lag over time" effects instead of settings values manually.
 * Lightweight and server-only - only needed on the server, optional client install adds ping display only.
 
 ## Commands
@@ -26,15 +26,8 @@ By default, the client-side ping display is disabled. Toggle it whenever you wan
 * `/makelag state <player> <module> <key> <value>` - Sets the passed in key of the specified module to the passed in value for the specified player.
 * `/makelag config <key> <value>` - Sets the specified key to the passed in value for all players.
 
-## Modules
-A module affects gameplay in some way, which is described by the module id.
-Every module has an `intensity` key which controls the chance of activation.
-Some modules also have other keys that change how the module works.
-
-## Progressions
-Progressions can help managing module key values by automatically changing them.
-A progression is simply a timeline of keyframes, that change the value of a key in a module.
-~~(TODO) They can be loaded using JSON files~~
+## Configuration
+See [CONFIGURATION.md](CONFIGURATION.md)
 
 ## Notes
 * This mod probably won't be ported to any other version/loader unless somebody decides to spend their time to contribute to this project.

@@ -13,7 +13,7 @@ public class PlayerConfig {
         Modules.MODULES.forEach(module -> states.add(new ModuleState(module)));
     }
 
-    public ModuleState getState(Module module) {
+    public ModuleState get(Module module) {
         return states.stream().filter(state -> state.module == module).findFirst().orElseThrow();
     }
 }

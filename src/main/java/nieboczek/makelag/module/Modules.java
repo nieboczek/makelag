@@ -11,6 +11,7 @@ public class Modules {
     public static final ConfigModule CONFIG = new ConfigModule();
 
     public static final AdvancementUnlockModule ADVANCEMENT_UNLOCK = add(new AdvancementUnlockModule());
+    public static final ChangeDeathMessageModule CHANGE_DEATH_MESSAGE = add(new ChangeDeathMessageModule());
     public static final DeathModule DEATH = add(new DeathModule());
     public static final DisappearShiftPlacedBlocksModule DISAPPEAR_SHIFT_PLACED_BLOCKS = add(new DisappearShiftPlacedBlocksModule());
     public static final DismountModule DISMOUNT = add(new DismountModule());

@@ -67,7 +67,7 @@ public class DelayedChannelHandler extends ChannelDuplexHandler {
             return;
         }
 
-        ModuleState state = MakeLag.getConfig(handler.player).getState(Modules.PACKET);
+        ModuleState state = MakeLag.getState(handler.player, Modules.PACKET);
 
         if (MakeLag.random.nextFloat() < state.get(Modules.PACKET.dropChance)) {
             MakeLag.droppedPackets++;

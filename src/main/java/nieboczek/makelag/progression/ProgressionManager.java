@@ -37,8 +37,8 @@ public class ProgressionManager {
             }
 
             try (FileReader reader = new FileReader(file)) {
-                Progression progression = Config.gson.fromJson(reader, Progression.class);
-                return load(progression);
+                SerializedProgression progression = Config.gson.fromJson(reader, SerializedProgression.class);
+                return load(progression, id);
             } catch (IOException e) {
                 return List.of(
                         "Couldn't load progression:",
@@ -60,8 +60,8 @@ public class ProgressionManager {
         );
     }
 
-    public static List<String> load(Progression progression) {
-        for (Progression.SerializedKeyFrame serializedFrame : progression.timeline()) {
+    public static List<String> load(SerializedProgression progression, String id) {
+        for (SerializedProgression.SerializedKeyframe serializedFrame : progression.timeline()) {
             Module module = moduleFromStr(serializedFrame.module());
             if (module == null) {
                 return List.of(
@@ -89,7 +89,7 @@ public class ProgressionManager {
         }
 
         timeline.sort(Comparator.comparingLong(Keyframe::startTick));
-        loadedId = progression.id();
+        loadedId = id;
         return List.of("Loaded progression " + loadedId);
     }
 
@@ -97,7 +97,7 @@ public class ProgressionManager {
         for (Module module : Modules.MODULES) {
             List<ModuleState> states = new ArrayList<>();
             for (PlayerConfig config : MakeLag.playerConfigs.values()) {
-                states.add(config.getState(module));
+                states.add(config.get(module));
             }
             processFrames(currentTick, states, module);
         }
@@ -108,7 +108,7 @@ public class ProgressionManager {
     public static void resetToDefaults() {
         for (Module module : Modules.MODULES) {
             for (PlayerConfig config : MakeLag.playerConfigs.values()) {
-                ModuleState state = config.getState(module);
+                ModuleState state = config.get(module);
 
                 for (Key<?> key : module.configurableKeys) {
                     state.set((Key<Object>) key, key.initialValue());
@@ -124,7 +124,7 @@ public class ProgressionManager {
         for (Module module : Modules.MODULES) {
             List<ModuleState> states = new ArrayList<>();
             for (PlayerConfig config : MakeLag.playerConfigs.values()) {
-                states.add(config.getState(module));
+                states.add(config.get(module));
             }
 
             for (Keyframe<?> frame : timeline) {

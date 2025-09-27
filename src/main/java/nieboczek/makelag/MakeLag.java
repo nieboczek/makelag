@@ -69,6 +69,10 @@ public class MakeLag implements ModInitializer {
         return playerConfigs.get(player.getUuid());
     }
 
+    public static ModuleState getState(ServerPlayerEntity player, Module module) {
+        return getConfig(player).get(module);
+    }
+
     @Override
     public void onInitialize() {
         CommandRegistrationCallback.EVENT.register((x, y, z) -> x.register(Commands.command));
@@ -116,7 +120,7 @@ public class MakeLag implements ModInitializer {
             List<ServerPlayerEntity> players = server.getPlayerManager().getPlayerList();
 
             for (ServerPlayerEntity player : players) {
-                ModuleState state = getConfig(player).getState(Modules.PACKET);
+                ModuleState state = getState(player, Modules.PACKET);
                 int delay = random.nextInt(
                         state.get(Modules.PACKET.delay) - state.get(Modules.PACKET.delayDelta) + 20,
                         state.get(Modules.PACKET.delay) + state.get(Modules.PACKET.delayDelta) + 31
@@ -168,7 +172,7 @@ public class MakeLag implements ModInitializer {
             PlayerConfig config = getConfig(player);
 
             for (Module module : Modules.MODULES) {
-                ModuleState state = config.getState(module);
+                ModuleState state = config.get(module);
 
                 boolean canRun = module.didRandomChanceSucceed(state, random) && module.canRun(player, state);
                 if (canRun) {
@@ -186,7 +190,7 @@ public class MakeLag implements ModInitializer {
 
         ItemStack stack = player.getStackInHand(hand);
         if (stack.getItem() instanceof BlockItem) {
-            ModuleState state = getConfig((ServerPlayerEntity) player).getState(Modules.DISAPPEAR_SHIFT_PLACED_BLOCKS);
+            ModuleState state = getState((ServerPlayerEntity) player, Modules.DISAPPEAR_SHIFT_PLACED_BLOCKS);
             ArrayList<BlockPos> positionsToDisappear = state.get(Modules.DISAPPEAR_SHIFT_PLACED_BLOCKS.positionsToDisappear);
 
             if (
@@ -239,7 +243,7 @@ public class MakeLag implements ModInitializer {
         DelayedChannelHandler handler = new DelayedChannelHandler(player.networkHandler);
         player.networkHandler.connection.channel.pipeline().addBefore("packet_handler", "makelag", handler);
 
-        ModuleState state = config.getState(Modules.PACKET);
+        ModuleState state = config.get(Modules.PACKET);
         state.set(Modules.PACKET.handler, handler);
 
         if (pingDisplayed) {

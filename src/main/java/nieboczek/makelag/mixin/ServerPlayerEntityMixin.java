@@ -5,6 +5,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import nieboczek.makelag.MakeLag;
 import nieboczek.makelag.config.Config;
+import nieboczek.makelag.module.Modules;
+import nieboczek.makelag.module.backend.ModuleState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -13,7 +15,19 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public class ServerPlayerEntityMixin {
     @Redirect(method = "onDeath", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/damage/DamageTracker;getDeathMessage()Lnet/minecraft/text/Text;"))
     public Text onDeath(DamageTracker instance) {
-        String name = instance.entity.getDisplayName().getString();
-        return Text.literal(Config.deathMessages[MakeLag.random.nextInt(Config.deathMessages.length)].replace("{}", name));
+        if (!(instance.entity instanceof ServerPlayerEntity player)) {
+            return instance.getDeathMessage();
+        }
+        ModuleState state = MakeLag.getState(player, Modules.CHANGE_DEATH_MESSAGE);
+        boolean force = state.get(Modules.CHANGE_DEATH_MESSAGE.forceCustomDeathMessage);
+        float chance = state.get(Modules.CHANGE_DEATH_MESSAGE.intensity);
+
+        if (force || MakeLag.random.nextFloat() < chance) {
+            String name = player.getDisplayName().getString();
+            state.set(Modules.CHANGE_DEATH_MESSAGE.forceCustomDeathMessage, false);
+
+            return Text.literal(Config.deathMessages[MakeLag.random.nextInt(Config.deathMessages.length)].replace("{}", name));
+        }
+        return instance.getDeathMessage();
     }
 }
