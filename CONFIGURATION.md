@@ -277,7 +277,8 @@ Teleports the player away to a place previously been in for two seconds and then
 </table>
 
 # Config module
-The keys under this module affects everyone. You can configure them using `/makelag config <key> <value>`.  
+The keys under this module affects everyone. You can configure them using `/makelag config <key> <value>`.
+Works with progressions too under the id `config`.  
 Possible actions:
 * If chance `fakeLagSpikeChance` succeeds, executes the following set of commands:
   * `/tick freeze` 
