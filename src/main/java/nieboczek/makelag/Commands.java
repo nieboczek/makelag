@@ -22,7 +22,6 @@ import nieboczek.makelag.module.Modules;
 import nieboczek.makelag.module.backend.Key;
 import nieboczek.makelag.module.backend.Module;
 import nieboczek.makelag.network.PingDisplayS2CPacket;
-import nieboczek.makelag.progression.Keyframe;
 import nieboczek.makelag.progression.ProgressionManager;
 import org.apache.commons.io.FilenameUtils;
 
@@ -50,7 +49,7 @@ public class Commands {
 
         T value = context.getArgument("value", key.clazz());
         config.states.stream()
-                .filter(state -> state.module.getName().equals(moduleName))
+                .filter(state -> state.module.getId().equals(moduleName))
                 .findFirst().orElseThrow().set(key, value);
 
         sendFeedback(context, "Set %s of %s for %s to %s".formatted(key.id(), moduleName, player.getName().getString(), value));
@@ -101,7 +100,7 @@ public class Commands {
         RequiredArgumentBuilder<ServerCommandSource, EntitySelector> stateCmd = argument("player", EntityArgumentType.player());
 
         for (Module module : Modules.MODULES) {
-            String moduleName = module.getName();
+            String moduleName = module.getId();
             LiteralArgumentBuilder<ServerCommandSource> moduleCmd = literal(moduleName);
 
             for (Key<?> key : module.configurableKeys) {
@@ -131,21 +130,14 @@ public class Commands {
         //  /makelag reload
         command.then(literal("reload")
                 .executes(context -> {
-                    List<Keyframe<?>> previousTimeline = List.copyOf(ProgressionManager.timeline);
                     String[] previousDeathMessages = Config.deathMessages.clone();
-
                     ProgressionManager.load(ProgressionManager.loadedId);
                     Config.reload();
 
                     boolean sameDeathMessages = Arrays.equals(previousDeathMessages, Config.deathMessages);
-                    boolean sameTimelines = previousTimeline.equals(ProgressionManager.timeline);
 
-                    if (sameDeathMessages && sameTimelines) {
-                        sendFeedback(context, "Nothing has been reloaded. Same file content");
-                    } else if (sameDeathMessages) {
+                    if (sameDeathMessages) {
                         sendFeedback(context, "Reloaded progression " + ProgressionManager.loadedId);
-                    } else if (sameTimelines) {
-                        sendFeedback(context, "Reloaded death_messages.json");
                     } else {
                         sendFeedback(context, "Reloaded death_messages.json and progression " + ProgressionManager.loadedId);
                     }

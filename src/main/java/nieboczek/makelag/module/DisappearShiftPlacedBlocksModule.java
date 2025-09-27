@@ -15,7 +15,7 @@ public class DisappearShiftPlacedBlocksModule extends NotRunnableModule {
     public Key<ArrayList<BlockPos>> positionsToDisappear = key(Key.of(new ArrayList<>()));
 
     @Override
-    public String getName() {
+    public String getId() {
         return "disappearShiftPlacedBlocks";
     }
 }

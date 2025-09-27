@@ -16,7 +16,7 @@ public class StopSprintingModule extends Module {
     }
 
     @Override
-    public String getName() {
+    public String getId() {
         return "stopSprinting";
     }
 }

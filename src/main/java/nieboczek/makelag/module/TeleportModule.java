@@ -35,7 +35,7 @@ public class TeleportModule extends Module {
     }
 
     @Override
-    public String getName() {
+    public String getId() {
         return "teleport";
     }
 }

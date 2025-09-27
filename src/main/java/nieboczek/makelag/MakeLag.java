@@ -80,27 +80,9 @@ public class MakeLag implements ModInitializer {
         PayloadTypeRegistry.playS2C().register(PingS2CPacket.ID, PingS2CPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(PingDisplayS2CPacket.ID, PingDisplayS2CPacket.CODEC);
 
+        ServerTickEvents.END_SERVER_TICK.register(this::serverTick);
         ServerPlayerEvents.JOIN.register(this::setupPlayer);
         UseBlockCallback.EVENT.register(this::useBlock);
-
-        ServerTickEvents.END_SERVER_TICK.register(mcServer -> {
-            if (server == null) {
-                server = mcServer;
-            }
-            sendPings();
-
-            if (ticks < 0) {
-                return;
-            }
-
-            ProgressionManager.tick(ticks);
-            ticksUntilSendStats--;
-            ticks += tickRate;
-
-            addNewPosition();
-            executeFakeLagSpike();
-            runModules();
-        });
 
         Config.setup();
         Config.reload();
@@ -112,6 +94,25 @@ public class MakeLag implements ModInitializer {
                 log.error(message);
             }
         }
+    }
+
+    private void serverTick(MinecraftServer mcServer) {
+        if (server == null) {
+            server = mcServer;
+        }
+        sendPings();
+
+        if (ticks < 0) {
+            return;
+        }
+
+        ProgressionManager.tick(ticks);
+        ticksUntilSendStats--;
+        ticks += tickRate;
+
+        addNewPosition();
+        executeFakeLagSpike();
+        runModules();
     }
 
     private void sendPings() {
@@ -174,7 +175,7 @@ public class MakeLag implements ModInitializer {
             for (Module module : Modules.MODULES) {
                 ModuleState state = config.get(module);
 
-                boolean canRun = module.didRandomChanceSucceed(state, random) && module.canRun(player, state);
+                boolean canRun = module.canRun(player, state) && module.didRandomChanceSucceed(state, random);
                 if (canRun) {
                     module.run(player, state);
                     modulesRan++;

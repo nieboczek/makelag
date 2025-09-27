@@ -21,7 +21,7 @@ public abstract class Module {
 
     public abstract void run(ServerPlayerEntity player, ModuleState state);
 
-    public abstract String getName();
+    public abstract String getId();
 
     protected <T> Key<T> key(Key<T> key) {
         allKeys.add(key);

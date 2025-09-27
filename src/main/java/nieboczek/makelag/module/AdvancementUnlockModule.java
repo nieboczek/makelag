@@ -26,7 +26,7 @@ public class AdvancementUnlockModule extends Module {
     }
 
     @Override
-    public String getName() {
+    public String getId() {
         return "advancementUnlock";
     }
 

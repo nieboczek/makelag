@@ -7,7 +7,7 @@ public class ConfigModule extends NoIntensityModule {
     public Key<Float> fakeLagSpikeChance = configKey(Key.zeroToOneFloat("fakeLagSpikeChance"));
 
     @Override
-    public String getName() {
+    public String getId() {
         return "config";
     }
 }

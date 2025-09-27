@@ -13,7 +13,7 @@ public class DeathModule extends Module {
     }
 
     @Override
-    public String getName() {
+    public String getId() {
         return "death";
     }
 }

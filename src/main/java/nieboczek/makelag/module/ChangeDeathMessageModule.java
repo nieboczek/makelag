@@ -7,7 +7,7 @@ public class ChangeDeathMessageModule extends NotRunnableModule {
     public Key<Boolean> forceCustomDeathMessage = key(Key.bool());
 
     @Override
-    public String getName() {
+    public String getId() {
         return "changeDeathMessage";
     }
 }

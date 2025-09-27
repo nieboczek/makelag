@@ -33,7 +33,7 @@ public class SendStatsModule extends Module {
     }
 
     @Override
-    public String getName() {
+    public String getId() {
         return "sendStats";
     }
 }

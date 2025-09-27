@@ -164,7 +164,7 @@ public class ProgressionManager {
         }
 
         for (Module module : Modules.MODULES) {
-            if (module.getName().equals(str)) {
+            if (module.getId().equals(str)) {
                 return module;
             }
         }

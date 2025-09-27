@@ -14,7 +14,7 @@ public class PacketModule extends NoIntensityModule {
     public Key<DelayedChannelHandler> handler = key(Key.of());
 
     @Override
-    public String getName() {
+    public String getId() {
         return "packet";
     }
 }
