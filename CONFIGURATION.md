@@ -81,7 +81,7 @@ In this example:
 * For ticks 72,000 to 216,000 (60-180 minutes) `intensity` of `death` goes from 0 to 0.0001.
 
 ## Loading progressions
-Put your progression JSON in `config/makelag/progression/` inside your Minecraft instance.  
+Put your progression JSON in `config/makelag/progressions/` inside your Minecraft instance.  
 Use `/makelag progression load your_progression` where `your_progression` should be replaced
 with the file name of your progression file minus the `.json` file extension.  
 If your progression has been already loaded before in the same world you can use `/makelag reload`,
