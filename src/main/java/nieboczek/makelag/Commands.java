@@ -30,11 +30,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import static net.minecraft.server.command.CommandManager.argument;
-import static net.minecraft.server.command.CommandManager.literal;
+import static net.minecraft.server.command.CommandManager.*;
 
 public class Commands {
-    public static final LiteralArgumentBuilder<ServerCommandSource> command = literal("makelag");
+    public static final LiteralArgumentBuilder<ServerCommandSource> command = literal("makelag").requires(requirePermissionLevel(2));
 
     private static final SuggestionProvider<ServerCommandSource> PROGRESSION_SUGGESTIONS = (context, builder) ->
             getFileSuggestionsWithoutExtensions(builder, new File(Config.getCfgDir(), "progressions"));
