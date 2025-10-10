@@ -19,6 +19,7 @@ import java.util.List;
 
 public class ProgressionManager {
     public static final List<Keyframe<?>> timeline = new ArrayList<>();
+    public static int loadedProgressionHash;
     public static String loadedId = "null";
 
     public static List<String> load(String id) {
@@ -27,7 +28,7 @@ public class ProgressionManager {
         if (files == null) {
             return List.of(
                     "Couldn't load progression:",
-                    "Wasn't able to open the directory with progressions"
+                    "Wasn't able to get files in directory config/makelag/progressions"
             );
         }
 
@@ -38,7 +39,7 @@ public class ProgressionManager {
 
             try (FileReader reader = new FileReader(file)) {
                 SerializedProgression progression = Config.gson.fromJson(reader, SerializedProgression.class);
-                return load(progression, id);
+                return deserializeProgression(progression, id, file.hashCode());
             } catch (IOException e) {
                 return List.of(
                         "Couldn't load progression:",
@@ -60,7 +61,7 @@ public class ProgressionManager {
         );
     }
 
-    public static List<String> load(SerializedProgression progression, String id) {
+    private static List<String> deserializeProgression(SerializedProgression progression, String id, int hash) {
         for (SerializedProgression.SerializedKeyframe serializedFrame : progression.timeline()) {
             Module module = moduleFromStr(serializedFrame.module());
             if (module == null) {
@@ -89,6 +90,7 @@ public class ProgressionManager {
         }
 
         timeline.sort(Comparator.comparingLong(Keyframe::startTick));
+        loadedProgressionHash = hash;
         loadedId = id;
         return List.of("Loaded progression " + loadedId);
     }

@@ -130,14 +130,20 @@ public class Commands {
         //  /makelag reload
         command.then(literal("reload")
                 .executes(context -> {
+                    int oldHash = ProgressionManager.loadedProgressionHash;
                     String[] previousDeathMessages = Config.deathMessages.clone();
                     ProgressionManager.load(ProgressionManager.loadedId);
                     Config.reload();
 
                     boolean sameDeathMessages = Arrays.equals(previousDeathMessages, Config.deathMessages);
+                    boolean sameProgression = oldHash == ProgressionManager.loadedProgressionHash;
 
-                    if (sameDeathMessages) {
+                    if (sameDeathMessages && sameProgression) {
+                        sendFeedback(context, "Reloaded, nothing changed");
+                    } else if (sameDeathMessages) {
                         sendFeedback(context, "Reloaded progression " + ProgressionManager.loadedId);
+                    } else if (sameProgression) {
+                        sendFeedback(context, "Reloaded death_messages.json");
                     } else {
                         sendFeedback(context, "Reloaded death_messages.json and progression " + ProgressionManager.loadedId);
                     }
