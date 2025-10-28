@@ -78,7 +78,7 @@ Each entry in `timeline` has the following fields:
 In this example:
 * For ticks 0 to 36,000 (0-30 minutes), `delay` key of module `packet` ramps up from 0 to 400.
 * For ticks 36,000 to 72,000 (30-60 minutes), it ramps up from 400 to 1200.
-* For ticks 72,000 to 216,000 (60-180 minutes) `intensity` of `death` goes from 0 to 0.0001.
+* For ticks 72,000 to 216,000 (60-180 minutes), `intensity` of `death` goes from 0 to 0.0001.
 
 ## Loading progressions
 Put your progression JSON in `config/makelag/progressions/` inside your Minecraft instance.  
