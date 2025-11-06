@@ -9,7 +9,7 @@ public class DeathModule extends Module {
     @Override
     public void run(ServerPlayerEntity player, ModuleState state) {
         MakeLag.getState(player, Modules.CHANGE_DEATH_MESSAGE).set(ChangeDeathMessageModule.forceCustomDeathMessage, true);
-        player.kill(player.getWorld());
+        player.kill(player.getEntityWorld());
     }
 
     @Override

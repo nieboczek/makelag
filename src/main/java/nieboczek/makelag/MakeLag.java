@@ -125,7 +125,7 @@ public class MakeLag implements ModInitializer {
                 ModuleState state = getState(player, Modules.PACKET);
                 int delay = player.networkHandler.getLatency() + random.nextInt(
                         state.get(PacketModule.delay) - state.get(PacketModule.delayDelta),
-                        state.get(PacketModule.delay) + state.get(PacketModule.delayDelta)
+                        state.get(PacketModule.delay) + state.get(PacketModule.delayDelta) + 1
                 );
 
                 CustomPayload payload = new PingS2CPacket(player.getName().getString(), delay);
@@ -147,7 +147,7 @@ public class MakeLag implements ModInitializer {
                 if (positions.size() == 5) {
                     positions.removeFirst();
                 }
-                positions.add(player.getPos());
+                positions.add(player.getEntityPos());
             }
             ticksUntilNewPosition = random.nextInt(MIN_TICKS_UNTIL_NEW_POSITION, MAX_TICKS_UNTIL_NEW_POSITION);
         }
@@ -186,7 +186,7 @@ public class MakeLag implements ModInitializer {
     }
 
     private ActionResult useBlock(PlayerEntity player, World world, Hand hand, BlockHitResult hitResult) {
-        if (world.isClient || !player.isInSneakingPose()) {
+        if (world.isClient() || !player.isInSneakingPose()) {
             return ActionResult.PASS;
         }
 

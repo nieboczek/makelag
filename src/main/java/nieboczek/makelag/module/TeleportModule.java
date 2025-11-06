@@ -21,16 +21,16 @@ public class TeleportModule extends Module {
 
     @Override
     public void run(ServerPlayerEntity player, ModuleState state) {
-        Vec3d playerPos = player.getPos();
+        Vec3d playerPos = player.getEntityPos();
         float playerYaw = player.getYaw();
         float playerPitch = player.getPitch();
 
         state.set(isTeleporting, true);
         Vec3d pos = MakeLag.positions.get(MakeLag.random.nextInt(MakeLag.positions.size()));
-        player.teleportTo(new TeleportTarget(player.getWorld(), pos, Vec3d.ZERO, playerYaw, playerPitch, TeleportTarget.NO_OP));
+        player.teleportTo(new TeleportTarget(player.getEntityWorld(), pos, Vec3d.ZERO, playerYaw, playerPitch, TeleportTarget.NO_OP));
 
         MakeLag.scheduler.schedule(() -> MakeLag.server.executeSync(() -> {
-            player.teleportTo(new TeleportTarget(player.getWorld(), playerPos, Vec3d.ZERO, playerYaw, playerPitch, TeleportTarget.NO_OP));
+            player.teleportTo(new TeleportTarget(player.getEntityWorld(), playerPos, Vec3d.ZERO, playerYaw, playerPitch, TeleportTarget.NO_OP));
             state.set(isTeleporting, false);
         }), 2, TimeUnit.SECONDS);
     }

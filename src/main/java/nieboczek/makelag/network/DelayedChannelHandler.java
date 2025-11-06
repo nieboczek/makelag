@@ -192,7 +192,7 @@ public class DelayedChannelHandler extends ChannelDuplexHandler {
         ACCEPTED_TYPES.add(PlayPackets.CONTAINER_CLICK);
         ACCEPTED_TYPES.add(PlayPackets.CONTAINER_CLOSE_C2S);
         ACCEPTED_TYPES.add(PlayPackets.CONTAINER_SLOT_STATE_CHANGED);
-        ACCEPTED_TYPES.add(PlayPackets.DEBUG_SAMPLE_SUBSCRIPTION);
+        ACCEPTED_TYPES.add(PlayPackets.DEBUG_SUBSCRIPTION_REQUEST);
         ACCEPTED_TYPES.add(PlayPackets.EDIT_BOOK);
         ACCEPTED_TYPES.add(PlayPackets.ENTITY_TAG_QUERY);
         ACCEPTED_TYPES.add(PlayPackets.INTERACT);
