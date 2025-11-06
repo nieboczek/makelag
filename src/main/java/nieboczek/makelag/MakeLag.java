@@ -56,7 +56,7 @@ public class MakeLag implements ModInitializer {
 
     public static ModuleState configState = new ModuleState(Modules.CONFIG);
     public static ArrayList<Vec3d> positions = new ArrayList<>();
-    public static boolean pingDisplayed = false;
+    public static boolean displayingPing = false;
     public static int tickRate = 0;
     public static int ticks = -1;
 
@@ -243,7 +243,7 @@ public class MakeLag implements ModInitializer {
         player.networkHandler.connection.channel.pipeline().addBefore("packet_handler", "makelag", handler);
         config.get(Modules.PACKET).set(PacketModule.handler, handler);
 
-        if (pingDisplayed) {
+        if (displayingPing) {
             ServerPlayNetworking.send(player, new PingDisplayS2CPacket(true));
         }
     }

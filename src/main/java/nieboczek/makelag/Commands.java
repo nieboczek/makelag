@@ -90,8 +90,8 @@ public class Commands {
         //  /makelag togglePingDisplay
         command.then(literal("togglePingDisplay")
                 .executes(context -> {
-                    MakeLag.pingDisplayed = !MakeLag.pingDisplayed;
-                    CustomPayload payload = new PingDisplayS2CPacket(MakeLag.pingDisplayed);
+                    MakeLag.displayingPing = !MakeLag.displayingPing;
+                    CustomPayload payload = new PingDisplayS2CPacket(MakeLag.displayingPing);
 
                     for (ServerPlayerEntity player : MakeLag.server.getPlayerManager().getPlayerList()) {
                         ServerPlayNetworking.send(player, payload);
