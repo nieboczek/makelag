@@ -4,14 +4,30 @@ import nieboczek.makelag.module.backend.Key;
 import nieboczek.makelag.module.backend.NoIntensityModule;
 import nieboczek.makelag.network.DelayedChannelHandler;
 
-public class PacketModule extends NoIntensityModule {
-    public Key<Integer> delay = configKey(Key.notNegativeInt("delay"));
-    public Key<Integer> delayDelta = configKey(Key.notNegativeInt("delayDelta"));
-    public Key<Float> dropChance = configKey(Key.zeroToOneFloat("dropChance"));
-    public Key<Float> lagSpikeChance = configKey(Key.zeroToOneFloat("lagSpikeChance"));
-    public Key<Float> lagSpikeMultiplier = configKey(Key.notNegativeFloat("lagSpikeMultiplier"));
+import java.util.ArrayList;
 
-    public Key<DelayedChannelHandler> handler = key(Key.of());
+public class PacketModule extends NoIntensityModule {
+    public static final Key<Integer> delay = Key.notNegativeInt("delay");
+    public static final Key<Integer> delayDelta = Key.notNegativeInt("delayDelta");
+    public static final Key<Float> dropChance = Key.zeroToOneFloat("dropChance");
+    public static final Key<Float> lagSpikeChance = Key.zeroToOneFloat("lagSpikeChance");
+    public static final Key<Float> lagSpikeMultiplier = Key.notNegativeFloat("lagSpikeMultiplier");
+
+    public static final Key<DelayedChannelHandler> handler = Key.of();
+
+    @Override
+    public ArrayList<Key<?>> getAllKeys() {
+        var keys = super.getAllKeys();
+
+        keys.add(delay);
+        keys.add(delayDelta);
+        keys.add(dropChance);
+        keys.add(lagSpikeChance);
+        keys.add(lagSpikeMultiplier);
+        keys.add(handler);
+
+        return keys;
+    }
 
     @Override
     public String getId() {

@@ -2,13 +2,13 @@ package nieboczek.makelag.module.backend;
 
 import java.util.ArrayList;
 
-public class ModuleState {
+public final class ModuleState {
     private final ArrayList<StoredKey<?>> storedKeys = new ArrayList<>();
     public final Module module;
 
     public ModuleState(Module module) {
         this.module = module;
-        module.allKeys.forEach(key -> storedKeys.add(new StoredKey<>(key)));
+        module.getAllKeys().forEach(key -> storedKeys.add(new StoredKey<>(key)));
     }
 
     public <T> T get(Key<T> key) {
@@ -24,11 +24,11 @@ public class ModuleState {
         return (StoredKey<T>) storedKeys.stream().filter(stored -> stored.key == key).findFirst().orElseThrow();
     }
 
-    private static class StoredKey<T> {
+    private static final class StoredKey<T> {
         final Key<T> key;
         T value;
 
-        StoredKey(Key<T> key) {
+        private StoredKey(Key<T> key) {
             this.key = key;
             this.value = key.initialValue();
         }

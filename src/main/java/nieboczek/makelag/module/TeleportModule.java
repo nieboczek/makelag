@@ -8,10 +8,11 @@ import nieboczek.makelag.module.backend.Key;
 import nieboczek.makelag.module.backend.Module;
 import nieboczek.makelag.module.backend.ModuleState;
 
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 public class TeleportModule extends Module {
-    public Key<Boolean> isTeleporting = key(Key.bool());
+    public static final Key<Boolean> isTeleporting = Key.bool();
 
     @Override
     public boolean canRun(ServerPlayerEntity player, ModuleState state) {
@@ -32,6 +33,15 @@ public class TeleportModule extends Module {
             player.teleportTo(new TeleportTarget(player.getWorld(), playerPos, Vec3d.ZERO, playerYaw, playerPitch, TeleportTarget.NO_OP));
             state.set(isTeleporting, false);
         }), 2, TimeUnit.SECONDS);
+    }
+
+    @Override
+    public ArrayList<Key<?>> getAllKeys() {
+        var keys = super.getAllKeys();
+
+        keys.add(isTeleporting);
+
+        return keys;
     }
 
     @Override

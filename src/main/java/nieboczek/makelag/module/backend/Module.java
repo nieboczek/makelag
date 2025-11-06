@@ -6,10 +6,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public abstract class Module {
-    public ArrayList<Key<?>> allKeys = new ArrayList<>();
-    public ArrayList<Key<?>> configurableKeys = new ArrayList<>();
-
-    public Key<Float> intensity = configKey(Key.zeroToOneFloat("intensity"));
+    public static final Key<Float> intensity = Key.zeroToOneFloat("intensity");
 
     public boolean didRandomChanceSucceed(ModuleState state, Random random) {
         return random.nextFloat() < state.get(intensity);
@@ -21,16 +18,17 @@ public abstract class Module {
 
     public abstract void run(ServerPlayerEntity player, ModuleState state);
 
+    public ArrayList<Key<?>> getAllKeys() {
+        ArrayList<Key<?>> keys = new ArrayList<>();
+
+        keys.add(intensity);
+
+        return keys;
+    }
+
+    public Key<?>[] getConfigKeys() {
+        return getAllKeys().stream().filter(key -> key.argumentType() != null).toArray(Key<?>[]::new);
+    }
+
     public abstract String getId();
-
-    protected <T> Key<T> key(Key<T> key) {
-        allKeys.add(key);
-        return key;
-    }
-
-    protected <T> Key<T> configKey(Key<T> key) {
-        allKeys.add(key);
-        configurableKeys.add(key);
-        return key;
-    }
 }

@@ -5,6 +5,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import nieboczek.makelag.MakeLag;
 import nieboczek.makelag.config.Config;
+import nieboczek.makelag.module.ChangeDeathMessageModule;
 import nieboczek.makelag.module.Modules;
 import nieboczek.makelag.module.backend.ModuleState;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,13 +19,14 @@ public class ServerPlayerEntityMixin {
         if (!(instance.entity instanceof ServerPlayerEntity player)) {
             return instance.getDeathMessage();
         }
+
         ModuleState state = MakeLag.getState(player, Modules.CHANGE_DEATH_MESSAGE);
-        boolean force = state.get(Modules.CHANGE_DEATH_MESSAGE.forceCustomDeathMessage);
-        float chance = state.get(Modules.CHANGE_DEATH_MESSAGE.intensity);
+        boolean force = state.get(ChangeDeathMessageModule.forceCustomDeathMessage);
+        float chance = state.get(ChangeDeathMessageModule.intensity);
 
         if (force || MakeLag.random.nextFloat() < chance) {
             String name = player.getDisplayName().getString();
-            state.set(Modules.CHANGE_DEATH_MESSAGE.forceCustomDeathMessage, false);
+            state.set(ChangeDeathMessageModule.forceCustomDeathMessage, false);
 
             return Text.literal(Config.deathMessages[MakeLag.random.nextInt(Config.deathMessages.length)].replace("{}", name));
         }

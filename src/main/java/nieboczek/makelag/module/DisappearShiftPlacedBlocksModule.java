@@ -7,12 +7,25 @@ import nieboczek.makelag.module.backend.NotRunnableModule;
 import java.util.ArrayList;
 
 public class DisappearShiftPlacedBlocksModule extends NotRunnableModule {
-    public Key<Integer> blocksToStartTimer = configKey(Key.notNegativeInt("blocksToStartTimer"));
-    public Key<Integer> timerLength = configKey(Key.notNegativeInt("timerLength"));
-    public Key<Integer> timerLengthDelta = configKey(Key.notNegativeInt("timerLengthDelta"));
+    public static final Key<Integer> blocksToStartTimer = Key.notNegativeInt("blocksToStartTimer");
+    public static final Key<Integer> timerLength = Key.notNegativeInt("timerLength");
+    public static final Key<Integer> timerLengthDelta = Key.notNegativeInt("timerLengthDelta");
 
-    public Key<Boolean> timerStarted = key(Key.bool());
-    public Key<ArrayList<BlockPos>> positionsToDisappear = key(Key.of(new ArrayList<>()));
+    public static final Key<Boolean> timerStarted = Key.bool();
+    public static final Key<ArrayList<BlockPos>> positionsToDisappear = Key.of(new ArrayList<>());
+
+    @Override
+    public ArrayList<Key<?>> getAllKeys() {
+        var keys = super.getAllKeys();
+
+        keys.add(blocksToStartTimer);
+        keys.add(timerLength);
+        keys.add(timerLengthDelta);
+        keys.add(timerStarted);
+        keys.add(positionsToDisappear);
+
+        return keys;
+    }
 
     @Override
     public String getId() {

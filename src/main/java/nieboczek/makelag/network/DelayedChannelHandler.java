@@ -8,6 +8,7 @@ import net.minecraft.network.packet.PlayPackets;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import nieboczek.makelag.MakeLag;
 import nieboczek.makelag.module.Modules;
+import nieboczek.makelag.module.PacketModule;
 import nieboczek.makelag.module.backend.ModuleState;
 
 import java.util.ArrayList;
@@ -22,38 +23,7 @@ public class DelayedChannelHandler extends ChannelDuplexHandler {
         this.handler = handler;
     }
 
-    // TODO: Delaying S2C packets makes random teleports way more frequent, fix at your own sanity.
-//    @Override
-//    public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-//        if (!(msg instanceof Packet<?> packet)) {
-//            super.write(ctx, msg, promise);
-//            return;
-//        }
-//
-//        if (!ACCEPTED_TYPES.contains(packet.getPacketType())) {
-//            super.write(ctx, msg, promise);
-//            return;
-//        }
-//
-//        ModuleState state = MakeLag.getConfig(handler.player).getState(Modules.PACKET);
-//
-//        if (MakeLag.random.nextFloat() < state.get(Modules.PACKET.dropChance)) {
-//            MakeLag.droppedPackets++;
-//            return;
-//        }
-//
-//        int delay = MakeLag.random.nextInt(
-//                state.get(Modules.PACKET.delay) - state.get(Modules.PACKET.delayDelta),
-//                state.get(Modules.PACKET.delay) + state.get(Modules.PACKET.delayDelta) + 1
-//        );
-//
-//        if (MakeLag.random.nextFloat() < state.get(Modules.PACKET.lagSpikeChance)) {
-//            delay *= state.get(Modules.PACKET.lagSpikeMultiplier);
-//            MakeLag.lagSpikes++;
-//        }
-//
-//        MakeLag.scheduler.schedule(() -> ctx.writeAndFlush(msg, promise), delay, TimeUnit.MILLISECONDS);
-//    }
+    // TODO: Delaying S2C packets makes random teleports way more frequent, add this feature at your own sanity.
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -69,18 +39,18 @@ public class DelayedChannelHandler extends ChannelDuplexHandler {
 
         ModuleState state = MakeLag.getState(handler.player, Modules.PACKET);
 
-        if (MakeLag.random.nextFloat() < state.get(Modules.PACKET.dropChance)) {
+        if (MakeLag.random.nextFloat() < state.get(PacketModule.dropChance)) {
             MakeLag.droppedPackets++;
             return;
         }
 
         int delay = MakeLag.random.nextInt(
-                state.get(Modules.PACKET.delay) - state.get(Modules.PACKET.delayDelta),
-                state.get(Modules.PACKET.delay) + state.get(Modules.PACKET.delayDelta) + 1
+                state.get(PacketModule.delay) - state.get(PacketModule.delayDelta),
+                state.get(PacketModule.delay) + state.get(PacketModule.delayDelta) + 1
         );
 
-        if (MakeLag.random.nextFloat() < state.get(Modules.PACKET.lagSpikeChance)) {
-            delay *= state.get(Modules.PACKET.lagSpikeMultiplier);
+        if (MakeLag.random.nextFloat() < state.get(PacketModule.lagSpikeChance)) {
+            delay *= state.get(PacketModule.lagSpikeMultiplier);
             MakeLag.lagSpikes++;
         }
 

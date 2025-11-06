@@ -8,7 +8,7 @@ import nieboczek.makelag.module.backend.ModuleState;
 public class DeathModule extends Module {
     @Override
     public void run(ServerPlayerEntity player, ModuleState state) {
-        MakeLag.getState(player, Modules.CHANGE_DEATH_MESSAGE).set(Modules.CHANGE_DEATH_MESSAGE.forceCustomDeathMessage, true);
+        MakeLag.getState(player, Modules.CHANGE_DEATH_MESSAGE).set(ChangeDeathMessageModule.forceCustomDeathMessage, true);
         player.kill(player.getWorld());
     }
 

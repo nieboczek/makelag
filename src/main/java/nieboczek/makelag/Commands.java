@@ -64,7 +64,12 @@ public class Commands {
     }
 
     private static CompletableFuture<Suggestions> getFileSuggestionsWithoutExtensions(SuggestionsBuilder builder, File dir) {
-        for (File file : dir.listFiles()) {
+        File[] files = dir.listFiles();
+        if (files == null) {
+            return builder.buildFuture();
+        }
+
+        for (File file : files) {
             builder.suggest(FilenameUtils.removeExtension(file.getName()));
         }
         return builder.buildFuture();
@@ -102,7 +107,7 @@ public class Commands {
             String moduleName = module.getId();
             LiteralArgumentBuilder<ServerCommandSource> moduleCmd = literal(moduleName);
 
-            for (Key<?> key : module.configurableKeys) {
+            for (Key<?> key : module.getConfigKeys()) {
                 moduleCmd.then(literal(key.id())
                         .then(argument("value", key.argumentType())
                                 .executes(context -> executeCommand(context, moduleName, key))
@@ -117,7 +122,7 @@ public class Commands {
         //  /makelag config
         LiteralArgumentBuilder<ServerCommandSource> configCmd = literal("config");
 
-        for (Key<?> key : Modules.CONFIG.configurableKeys) {
+        for (Key<?> key : Modules.CONFIG.getConfigKeys()) {
             configCmd.then(literal(key.id())
                     .then(argument("value", key.argumentType())
                             .executes(context -> executeConfigCommand(context, key))

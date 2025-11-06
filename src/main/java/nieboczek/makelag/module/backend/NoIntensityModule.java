@@ -1,9 +1,10 @@
 package nieboczek.makelag.module.backend;
 
+import java.util.ArrayList;
+
 public abstract class NoIntensityModule extends NotRunnableModule {
-    public NoIntensityModule() {
-        // Remove intensity key
-        configurableKeys.removeFirst();
-        allKeys.removeFirst();
+    @Override
+    public ArrayList<Key<?>> getAllKeys() {
+        return new ArrayList<>();
     }
 }

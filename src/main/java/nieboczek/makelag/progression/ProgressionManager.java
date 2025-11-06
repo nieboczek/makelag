@@ -112,7 +112,7 @@ public class ProgressionManager {
             for (PlayerConfig config : MakeLag.playerConfigs.values()) {
                 ModuleState state = config.get(module);
 
-                for (Key<?> key : module.configurableKeys) {
+                for (Key<?> key : module.getConfigKeys()) {
                     state.set((Key<Object>) key, key.initialValue());
                 }
             }
@@ -152,7 +152,7 @@ public class ProgressionManager {
 
     @SuppressWarnings("unchecked")
     private static Key<? extends Number> keyFromStr(Module module, String str) {
-        for (Key<?> key : module.configurableKeys) {
+        for (Key<?> key : module.getConfigKeys()) {
             if (str.equals(key.id())) {
                 return (Key<? extends Number>) key;
             }

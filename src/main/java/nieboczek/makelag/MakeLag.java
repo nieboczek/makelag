@@ -22,8 +22,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import nieboczek.makelag.config.Config;
 import nieboczek.makelag.config.PlayerConfig;
-import nieboczek.makelag.module.Modules;
-import nieboczek.makelag.module.SendStatsModule;
+import nieboczek.makelag.module.*;
 import nieboczek.makelag.module.backend.Module;
 import nieboczek.makelag.module.backend.ModuleState;
 import nieboczek.makelag.network.DelayedChannelHandler;
@@ -70,7 +69,7 @@ public class MakeLag implements ModInitializer {
     }
 
     public static ModuleState getState(ServerPlayerEntity player, Module module) {
-        return getConfig(player).get(module);
+        return playerConfigs.get(player.getUuid()).get(module);
     }
 
     @Override
@@ -123,8 +122,8 @@ public class MakeLag implements ModInitializer {
             for (ServerPlayerEntity player : players) {
                 ModuleState state = getState(player, Modules.PACKET);
                 int delay = random.nextInt(
-                        state.get(Modules.PACKET.delay) - state.get(Modules.PACKET.delayDelta) + 20,
-                        state.get(Modules.PACKET.delay) + state.get(Modules.PACKET.delayDelta) + 31
+                        state.get(PacketModule.delay) - state.get(PacketModule.delayDelta) + 20,
+                        state.get(PacketModule.delay) + state.get(PacketModule.delayDelta) + 31
                 );
 
                 CustomPayload payload = new PingS2CPacket(player.getName().getString(), delay);
@@ -153,7 +152,7 @@ public class MakeLag implements ModInitializer {
     }
 
     private void executeFakeLagSpike() {
-        if (random.nextFloat() < configState.get(Modules.CONFIG.fakeLagSpikeChance)) {
+        if (random.nextFloat() < configState.get(ConfigModule.fakeLagSpikeChance)) {
             server.getTickManager().setFrozen(true);
             scheduler.schedule(() -> {
                 server.executeSync(() -> {
@@ -192,16 +191,13 @@ public class MakeLag implements ModInitializer {
         ItemStack stack = player.getStackInHand(hand);
         if (stack.getItem() instanceof BlockItem) {
             ModuleState state = getState((ServerPlayerEntity) player, Modules.DISAPPEAR_SHIFT_PLACED_BLOCKS);
-            ArrayList<BlockPos> positionsToDisappear = state.get(Modules.DISAPPEAR_SHIFT_PLACED_BLOCKS.positionsToDisappear);
+            ArrayList<BlockPos> positionsToDisappear = state.get(DisappearShiftPlacedBlocksModule.positionsToDisappear);
 
-            if (
-                    positionsToDisappear.isEmpty()
-                            && random.nextFloat() >= state.get(Modules.DISAPPEAR_SHIFT_PLACED_BLOCKS.intensity)
-            ) {
+            if (positionsToDisappear.isEmpty() && random.nextFloat() >= state.get(DisappearShiftPlacedBlocksModule.intensity)) {
                 return ActionResult.PASS;
             }
 
-            int blocksToStartTimer = state.get(Modules.DISAPPEAR_SHIFT_PLACED_BLOCKS.blocksToStartTimer);
+            int blocksToStartTimer = state.get(DisappearShiftPlacedBlocksModule.blocksToStartTimer);
             BlockPos placedBlockPos = hitResult.getBlockPos().offset(hitResult.getSide());
 
             // Remove far away blocks from the list
@@ -213,18 +209,18 @@ public class MakeLag implements ModInitializer {
 
             positionsToDisappear.add(placedBlockPos);
 
-            if (!state.get(Modules.DISAPPEAR_SHIFT_PLACED_BLOCKS.timerStarted) && positionsToDisappear.size() >= blocksToStartTimer) {
+            if (!state.get(DisappearShiftPlacedBlocksModule.timerStarted) && positionsToDisappear.size() >= blocksToStartTimer) {
                 int timerLength = MakeLag.random.nextInt(
-                        state.get(Modules.DISAPPEAR_SHIFT_PLACED_BLOCKS.timerLength) - state.get(Modules.DISAPPEAR_SHIFT_PLACED_BLOCKS.timerLengthDelta),
-                        state.get(Modules.DISAPPEAR_SHIFT_PLACED_BLOCKS.timerLength) + state.get(Modules.DISAPPEAR_SHIFT_PLACED_BLOCKS.timerLengthDelta) + 1
+                        state.get(DisappearShiftPlacedBlocksModule.timerLength) - state.get(DisappearShiftPlacedBlocksModule.timerLengthDelta),
+                        state.get(DisappearShiftPlacedBlocksModule.timerLength) + state.get(DisappearShiftPlacedBlocksModule.timerLengthDelta) + 1
                 );
 
-                state.set(Modules.DISAPPEAR_SHIFT_PLACED_BLOCKS.timerStarted, true);
+                state.set(DisappearShiftPlacedBlocksModule.timerStarted, true);
                 scheduler.schedule(() -> server.executeSync(() -> {
                     for (BlockPos pos : positionsToDisappear) {
                         world.setBlockState(pos, Blocks.AIR.getDefaultState());
                     }
-                    state.set(Modules.DISAPPEAR_SHIFT_PLACED_BLOCKS.timerStarted, false);
+                    state.set(DisappearShiftPlacedBlocksModule.timerStarted, false);
                     positionsToDisappear.clear();
                     modulesRan++;
                 }), timerLength, TimeUnit.MILLISECONDS);
@@ -243,9 +239,7 @@ public class MakeLag implements ModInitializer {
 
         DelayedChannelHandler handler = new DelayedChannelHandler(player.networkHandler);
         player.networkHandler.connection.channel.pipeline().addBefore("packet_handler", "makelag", handler);
-
-        ModuleState state = config.get(Modules.PACKET);
-        state.set(Modules.PACKET.handler, handler);
+        config.get(Modules.PACKET).set(PacketModule.handler, handler);
 
         if (pingDisplayed) {
             ServerPlayNetworking.send(player, new PingDisplayS2CPacket(true));
