@@ -40,7 +40,12 @@ import java.util.concurrent.TimeUnit;
 public class MakeLag implements ModInitializer {
     private static final int MIN_TICKS_UNTIL_NEW_POSITION = 1200;
     private static final int MAX_TICKS_UNTIL_NEW_POSITION = 2400;
-    private static final int TICKS_UNTIL_PING_SEND = 40;
+    private int ticksUntilNewPosition = MIN_TICKS_UNTIL_NEW_POSITION;
+
+    private static final int MIN_TICKS_UNTIL_PING_SEND = 30;
+    private static final int MAX_TICKS_UNTIL_PING_SEND = 60;
+    private int ticksUntilPingSend = MIN_TICKS_UNTIL_PING_SEND;
+
     public static final String MSG_PREFIX = "§6MakeLag §8>>§r ";
 
     public static final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -54,9 +59,6 @@ public class MakeLag implements ModInitializer {
     public static boolean pingDisplayed = false;
     public static int tickRate = 0;
     public static int ticks = -1;
-
-    public int ticksUntilNewPosition = MIN_TICKS_UNTIL_NEW_POSITION;
-    public int ticksUntilPingSend = TICKS_UNTIL_PING_SEND;
 
     public static int droppedPackets = 0;
     public static int modulesRan = 0;
@@ -121,9 +123,9 @@ public class MakeLag implements ModInitializer {
 
             for (ServerPlayerEntity player : players) {
                 ModuleState state = getState(player, Modules.PACKET);
-                int delay = random.nextInt(
-                        state.get(PacketModule.delay) - state.get(PacketModule.delayDelta) + 20,
-                        state.get(PacketModule.delay) + state.get(PacketModule.delayDelta) + 31
+                int delay = player.networkHandler.getLatency() + random.nextInt(
+                        state.get(PacketModule.delay) - state.get(PacketModule.delayDelta),
+                        state.get(PacketModule.delay) + state.get(PacketModule.delayDelta)
                 );
 
                 CustomPayload payload = new PingS2CPacket(player.getName().getString(), delay);
@@ -131,7 +133,7 @@ public class MakeLag implements ModInitializer {
                     ServerPlayNetworking.send(recipient, payload);
                 }
             }
-            ticksUntilPingSend = random.nextInt(TICKS_UNTIL_PING_SEND, TICKS_UNTIL_PING_SEND + 20);
+            ticksUntilPingSend = random.nextInt(MIN_TICKS_UNTIL_PING_SEND, MAX_TICKS_UNTIL_PING_SEND);
         }
     }
 
