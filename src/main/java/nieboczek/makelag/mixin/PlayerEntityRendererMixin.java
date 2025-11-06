@@ -9,14 +9,19 @@ import net.minecraft.client.render.state.CameraRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.Vec3d;
 import nieboczek.makelag.MakeLagClient;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PlayerEntityRenderer.class)
 public abstract class PlayerEntityRendererMixin extends EntityRenderer<PlayerEntity, PlayerEntityRenderState> {
+    @Unique
+    private static final Vec3d OFFSET = new Vec3d(0, 0.25, 0);
+
     private PlayerEntityRendererMixin(EntityRendererFactory.Context context) {
         super(context);
     }
@@ -37,6 +42,6 @@ public abstract class PlayerEntityRendererMixin extends EntityRenderer<PlayerEnt
         int ping = MakeLagClient.DELAYS.getOrDefault(state.displayName.getString(), 1000);
         String pingStr = ping + "ms";
 
-        queue.submitLabel(matrices, state.nameLabelPos, 0, Text.of(pingStr), !state.sneaking, state.light, state.squaredDistanceToCamera, cameraRenderState);
+        queue.submitLabel(matrices, state.nameLabelPos.add(OFFSET), 0, Text.of(pingStr), !state.sneaking, state.light, state.squaredDistanceToCamera, cameraRenderState);
     }
 }
