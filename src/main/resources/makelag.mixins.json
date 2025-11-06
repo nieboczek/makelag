@@ -9,7 +9,7 @@
     "ServerPlayNetworkHandlerMixin"
   ],
   "client": [
-    "EntityRendererMixin"
+    "PlayerEntityRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
