@@ -12,6 +12,8 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.command.EntitySelector;
 import net.minecraft.command.argument.EntityArgumentType;
+import net.minecraft.command.permission.Permission;
+import net.minecraft.command.permission.PermissionLevel;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -33,16 +35,19 @@ import java.util.concurrent.CompletableFuture;
 import static net.minecraft.server.command.CommandManager.*;
 
 public class Commands {
-    public static final LiteralArgumentBuilder<ServerCommandSource> command = literal("makelag").requires(requirePermissionLevel(2));
+    public static final LiteralArgumentBuilder<ServerCommandSource> command = literal("makelag")
+            .requires(
+                    source -> source.getPermissions().hasPermission(new Permission.Level(PermissionLevel.GAMEMASTERS)));
 
-    private static final SuggestionProvider<ServerCommandSource> PROGRESSION_SUGGESTIONS = (context, builder) ->
-            getFileSuggestionsWithoutExtensions(builder, new File(Config.getCfgDir(), "progressions"));
+    private static final SuggestionProvider<ServerCommandSource> PROGRESSION_SUGGESTIONS = (context,
+            builder) -> getFileSuggestionsWithoutExtensions(builder, new File(Config.getCfgDir(), "progressions"));
 
     private static void sendFeedback(CommandContext<ServerCommandSource> context, String msg) {
         context.getSource().sendFeedback(() -> Text.literal(MakeLag.MSG_PREFIX + msg), true);
     }
 
-    private static <T> int executeCommand(CommandContext<ServerCommandSource> context, String moduleName, Key<T> key) throws CommandSyntaxException {
+    private static <T> int executeCommand(CommandContext<ServerCommandSource> context, String moduleName, Key<T> key)
+            throws CommandSyntaxException {
         ServerPlayerEntity player = EntityArgumentType.getPlayer(context, "player");
         PlayerConfig config = MakeLag.getConfig(player);
 
@@ -51,7 +56,8 @@ public class Commands {
                 .filter(state -> state.module.getId().equals(moduleName))
                 .findFirst().orElseThrow().set(key, value);
 
-        sendFeedback(context, "Set %s of %s for %s to %s".formatted(key.id(), moduleName, player.getName().getString(), value));
+        sendFeedback(context,
+                "Set %s of %s for %s to %s".formatted(key.id(), moduleName, player.getName().getString(), value));
         return 0;
     }
 
@@ -63,7 +69,8 @@ public class Commands {
         return 0;
     }
 
-    private static CompletableFuture<Suggestions> getFileSuggestionsWithoutExtensions(SuggestionsBuilder builder, File dir) {
+    private static CompletableFuture<Suggestions> getFileSuggestionsWithoutExtensions(SuggestionsBuilder builder,
+            File dir) {
         File[] files = dir.listFiles();
         if (files == null) {
             return builder.buildFuture();
@@ -76,7 +83,7 @@ public class Commands {
     }
 
     static {
-        //  /makelag start
+        // /makelag start
         command.then(literal("start")
                 .executes(context -> {
                     MakeLag.tickRate = 1;
@@ -84,10 +91,9 @@ public class Commands {
 
                     sendFeedback(context, "Started making lag with progression " + ProgressionManager.loadedId);
                     return 0;
-                })
-        );
+                }));
 
-        //  /makelag togglePingDisplay
+        // /makelag togglePingDisplay
         command.then(literal("togglePingDisplay")
                 .executes(context -> {
                     MakeLag.displayingPing = !MakeLag.displayingPing;
@@ -97,11 +103,11 @@ public class Commands {
                         ServerPlayNetworking.send(player, payload);
                     }
                     return 0;
-                })
-        );
+                }));
 
-        //  /makelag state
-        RequiredArgumentBuilder<ServerCommandSource, EntitySelector> stateCmd = argument("player", EntityArgumentType.player());
+        // /makelag state
+        RequiredArgumentBuilder<ServerCommandSource, EntitySelector> stateCmd = argument("player",
+                EntityArgumentType.player());
 
         for (Module module : Modules.MODULES) {
             String moduleName = module.getId();
@@ -110,28 +116,24 @@ public class Commands {
             for (Key<?> key : module.getConfigKeys()) {
                 moduleCmd.then(literal(key.id())
                         .then(argument("value", key.argumentType())
-                                .executes(context -> executeCommand(context, moduleName, key))
-                        )
-                );
+                                .executes(context -> executeCommand(context, moduleName, key))));
             }
 
             stateCmd.then(moduleCmd);
         }
         command.then(literal("state").then(stateCmd));
 
-        //  /makelag config
+        // /makelag config
         LiteralArgumentBuilder<ServerCommandSource> configCmd = literal("config");
 
         for (Key<?> key : Modules.CONFIG.getConfigKeys()) {
             configCmd.then(literal(key.id())
                     .then(argument("value", key.argumentType())
-                            .executes(context -> executeConfigCommand(context, key))
-                    )
-            );
+                            .executes(context -> executeConfigCommand(context, key))));
         }
         command.then(configCmd);
 
-        //  /makelag reload
+        // /makelag reload
         command.then(literal("reload")
                 .executes(context -> {
                     int oldHash = ProgressionManager.loadedProgressionHash;
@@ -149,13 +151,13 @@ public class Commands {
                     } else if (sameProgression) {
                         sendFeedback(context, "Reloaded death_messages.json");
                     } else {
-                        sendFeedback(context, "Reloaded death_messages.json and progression " + ProgressionManager.loadedId);
+                        sendFeedback(context,
+                                "Reloaded death_messages.json and progression " + ProgressionManager.loadedId);
                     }
                     return 0;
-                })
-        );
+                }));
 
-        //  /makelag progression
+        // /makelag progression
         command.then(literal("progression")
                 .then(literal("pause")
                         .executes(context -> {
@@ -169,8 +171,7 @@ public class Commands {
 
                             sendFeedback(context, "Paused making lag at tick " + MakeLag.ticks);
                             return 0;
-                        })
-                )
+                        }))
                 .then(literal("resume")
                         .executes(context -> {
                             if (MakeLag.tickRate > 0) {
@@ -183,8 +184,7 @@ public class Commands {
 
                             sendFeedback(context, "Resumed making lag at tick " + MakeLag.ticks);
                             return 0;
-                        })
-                )
+                        }))
                 .then(literal("load")
                         .then(argument("progression", StringArgumentType.word())
                                 .suggests(PROGRESSION_SUGGESTIONS)
@@ -196,9 +196,7 @@ public class Commands {
                                         sendFeedback(context, message);
                                     }
                                     return 0;
-                                })
-                        )
-                )
+                                })))
                 .then(literal("tick")
                         .then(argument("tick", IntegerArgumentType.integer(-1))
                                 .executes(context -> {
@@ -207,32 +205,30 @@ public class Commands {
                                         ProgressionManager.setTick(MakeLag.ticks);
                                     }
 
-                                    sendFeedback(context, "Set progression tick of " + ProgressionManager.loadedId + " to " + MakeLag.ticks);
+                                    sendFeedback(context, "Set progression tick of " + ProgressionManager.loadedId
+                                            + " to " + MakeLag.ticks);
                                     return 0;
-                                })
-                        )
-                )
+                                })))
                 .then(literal("skip")
                         .then(argument("ticks", IntegerArgumentType.integer(0))
                                 .executes(context -> {
                                     int skippedTicks = context.getArgument("ticks", Integer.class);
                                     MakeLag.ticks += skippedTicks;
 
-                                    sendFeedback(context, "Skipped " + skippedTicks + " ticks of progression " + ProgressionManager.loadedId + ", progression tick is now " + MakeLag.ticks);
+                                    sendFeedback(context,
+                                            "Skipped " + skippedTicks + " ticks of progression "
+                                                    + ProgressionManager.loadedId + ", progression tick is now "
+                                                    + MakeLag.ticks);
                                     return 0;
-                                })
-                        )
-                )
+                                })))
                 .then(literal("tickRate")
                         .then(argument("rate", IntegerArgumentType.integer(0))
                                 .executes(context -> {
                                     MakeLag.tickRate = context.getArgument("rate", Integer.class);
 
-                                    sendFeedback(context, "Set progression tick rate of " + ProgressionManager.loadedId + " to " + MakeLag.tickRate);
+                                    sendFeedback(context, "Set progression tick rate of " + ProgressionManager.loadedId
+                                            + " to " + MakeLag.tickRate);
                                     return 0;
-                                })
-                        )
-                )
-        );
+                                }))));
     }
 }

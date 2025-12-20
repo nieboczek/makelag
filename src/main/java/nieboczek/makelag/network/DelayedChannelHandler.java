@@ -23,7 +23,8 @@ public class DelayedChannelHandler extends ChannelDuplexHandler {
         this.handler = handler;
     }
 
-    // TODO: Delaying S2C packets makes random teleports way more frequent, add this feature at your own sanity.
+    // TODO: Delaying S2C packets makes random teleports way more frequent, add this
+    // feature at your own sanity.
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -46,8 +47,7 @@ public class DelayedChannelHandler extends ChannelDuplexHandler {
 
         int delay = MakeLag.random.nextInt(
                 state.get(PacketModule.delay) - state.get(PacketModule.delayDelta),
-                state.get(PacketModule.delay) + state.get(PacketModule.delayDelta) + 1
-        );
+                state.get(PacketModule.delay) + state.get(PacketModule.delayDelta) + 1);
 
         if (MakeLag.random.nextFloat() < state.get(PacketModule.lagSpikeChance)) {
             delay *= state.get(PacketModule.lagSpikeMultiplier);
@@ -91,14 +91,15 @@ public class DelayedChannelHandler extends ChannelDuplexHandler {
         ACCEPTED_TYPES.add(PlayPackets.EXPLODE);
         ACCEPTED_TYPES.add(PlayPackets.FORGET_LEVEL_CHUNK);
         ACCEPTED_TYPES.add(PlayPackets.GAME_EVENT);
-        ACCEPTED_TYPES.add(PlayPackets.HORSE_SCREEN_OPEN);
+        ACCEPTED_TYPES.add(PlayPackets.MOUNT_SCREEN_OPEN);
         ACCEPTED_TYPES.add(PlayPackets.HURT_ANIMATION);
         ACCEPTED_TYPES.add(PlayPackets.INITIALIZE_BORDER);
         ACCEPTED_TYPES.add(PlayPackets.LEVEL_CHUNK_WITH_LIGHT);
         ACCEPTED_TYPES.add(PlayPackets.LEVEL_EVENT);
         ACCEPTED_TYPES.add(PlayPackets.LEVEL_PARTICLES);
         ACCEPTED_TYPES.add(PlayPackets.LIGHT_UPDATE);
-//        ACCEPTED_TYPES.add(PlayPackets.LOGIN); // let's not delay/drop this for obvious reasons
+        // ACCEPTED_TYPES.add(PlayPackets.LOGIN); // let's not delay/drop this for
+        // obvious reasons
         ACCEPTED_TYPES.add(PlayPackets.MAP_ITEM_DATA);
         ACCEPTED_TYPES.add(PlayPackets.MERCHANT_OFFERS);
         ACCEPTED_TYPES.add(PlayPackets.MOVE_ENTITY_POS);
@@ -125,7 +126,8 @@ public class DelayedChannelHandler extends ChannelDuplexHandler {
         ACCEPTED_TYPES.add(PlayPackets.RECIPE_BOOK_SETTINGS);
         ACCEPTED_TYPES.add(PlayPackets.REMOVE_ENTITIES);
         ACCEPTED_TYPES.add(PlayPackets.REMOVE_MOB_EFFECT);
-//        ACCEPTED_TYPES.add(PlayPackets.RESPAWN); // some players might not get that they should press "title screen" > "respawn" to retry the respawn
+        // ACCEPTED_TYPES.add(PlayPackets.RESPAWN); // some players might not get that
+        // they should press "title screen" > "respawn" to retry the respawn
         ACCEPTED_TYPES.add(PlayPackets.ROTATE_HEAD);
         ACCEPTED_TYPES.add(PlayPackets.SECTION_BLOCKS_UPDATE);
         ACCEPTED_TYPES.add(PlayPackets.SELECT_ADVANCEMENTS_TAB);
@@ -173,7 +175,8 @@ public class DelayedChannelHandler extends ChannelDuplexHandler {
         ACCEPTED_TYPES.add(PlayPackets.UPDATE_RECIPES);
         ACCEPTED_TYPES.add(PlayPackets.PROJECTILE_POWER);
         ACCEPTED_TYPES.add(PlayPackets.WAYPOINT);
-//        ACCEPTED_TYPES.add(PlayPackets.ACCEPT_TELEPORTATION); // if you delay this, the nether portal kinda breaks and the overall gameplay is frustrating
+        // ACCEPTED_TYPES.add(PlayPackets.ACCEPT_TELEPORTATION); // if you delay this,
+        // the nether portal kinda breaks and the overall gameplay is frustrating
         ACCEPTED_TYPES.add(PlayPackets.BLOCK_ENTITY_TAG_QUERY);
         ACCEPTED_TYPES.add(PlayPackets.BUNDLE_ITEM_SELECTED);
         ACCEPTED_TYPES.add(PlayPackets.CHANGE_DIFFICULTY_C2S);
@@ -184,7 +187,9 @@ public class DelayedChannelHandler extends ChannelDuplexHandler {
         ACCEPTED_TYPES.add(PlayPackets.CHAT);
         ACCEPTED_TYPES.add(PlayPackets.CHAT_SESSION_UPDATE);
         ACCEPTED_TYPES.add(PlayPackets.CHUNK_BATCH_RECEIVED);
-//        ACCEPTED_TYPES.add(PlayPackets.CLIENT_COMMAND); // some players might not get that they should press "title screen" > "respawn" to retry the respawn; also has REQUEST_STATS but that's fine
+        // ACCEPTED_TYPES.add(PlayPackets.CLIENT_COMMAND); // some players might not get
+        // that they should press "title screen" > "respawn" to retry the respawn; also
+        // has REQUEST_STATS but that's fine
         ACCEPTED_TYPES.add(PlayPackets.CLIENT_TICK_END);
         ACCEPTED_TYPES.add(PlayPackets.COMMAND_SUGGESTION);
         ACCEPTED_TYPES.add(PlayPackets.CONFIGURATION_ACKNOWLEDGED);
