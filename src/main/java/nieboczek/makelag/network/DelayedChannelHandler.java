@@ -91,7 +91,7 @@ public class DelayedChannelHandler extends ChannelDuplexHandler {
         ACCEPTED_TYPES.add(PlayPackets.EXPLODE);
         ACCEPTED_TYPES.add(PlayPackets.FORGET_LEVEL_CHUNK);
         ACCEPTED_TYPES.add(PlayPackets.GAME_EVENT);
-        ACCEPTED_TYPES.add(PlayPackets.HORSE_SCREEN_OPEN);
+        ACCEPTED_TYPES.add(PlayPackets.MOUNT_SCREEN_OPEN);
         ACCEPTED_TYPES.add(PlayPackets.HURT_ANIMATION);
         ACCEPTED_TYPES.add(PlayPackets.INITIALIZE_BORDER);
         ACCEPTED_TYPES.add(PlayPackets.LEVEL_CHUNK_WITH_LIGHT);

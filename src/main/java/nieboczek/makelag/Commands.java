@@ -33,7 +33,7 @@ import java.util.concurrent.CompletableFuture;
 import static net.minecraft.server.command.CommandManager.*;
 
 public class Commands {
-    public static final LiteralArgumentBuilder<ServerCommandSource> command = literal("makelag").requires(requirePermissionLevel(2));
+    public static final LiteralArgumentBuilder<ServerCommandSource> command = literal("makelag").requires(requirePermissionLevel(GAMEMASTERS_CHECK));
 
     private static final SuggestionProvider<ServerCommandSource> PROGRESSION_SUGGESTIONS = (context, builder) ->
             getFileSuggestionsWithoutExtensions(builder, new File(Config.getCfgDir(), "progressions"));
